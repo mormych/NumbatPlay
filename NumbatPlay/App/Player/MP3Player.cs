@@ -7,13 +7,21 @@ using System.Threading.Tasks;
 
 namespace NumbatPlay.App.Player
 {
+    /*
+     * TODO:
+     * - Zrobic odtwarzanie całego folderu
+     * 
+     */
+
     internal class MP3Player
     {
 
-        AudioFileReader audioFile;
-        WaveOutEvent outputDevice;
+        static AudioFileReader audioFile;
+        static WaveOutEvent outputDevice = new WaveOutEvent();
+        static public int counter = -1;
+        static Thread playerThread;
 
-        public WaveOutEvent OutputDevice
+        public static WaveOutEvent OutputDevice 
         {
             get
             {
@@ -23,10 +31,10 @@ namespace NumbatPlay.App.Player
 
         public MP3Player()
         {
-            outputDevice = new WaveOutEvent();
+
         }
 
-        public void Init()
+        public static void Init()
         {
             if (Config.PathToFile == null)
             {
@@ -41,14 +49,14 @@ namespace NumbatPlay.App.Player
                 Console.WriteLine("File opened...");
             }
             audioFile = new AudioFileReader(Config.PathToFile);
-            Thread playerThread = new Thread(Play);
+            playerThread = new Thread(Play);
             Console.WriteLine($"Playing... {MusicName(Config.PathToFile)}");
             playerThread.IsBackground = true; // This will allow to close all threads on application close
             playerThread.Start();
-            MP3Menu.ControlPlayer(outputDevice);
+            MP3Menu.ControlPlayer();
         }
 
-        private void Play()
+        private static void Play()
         {
             if(outputDevice.PlaybackState == PlaybackState.Playing)
             {
@@ -62,9 +70,41 @@ namespace NumbatPlay.App.Player
             {
                 Thread.Sleep(1000);
             }
+            if(outputDevice.PlaybackState == PlaybackState.Stopped && Config.FileArray.Count != 0) 
+            {
+                PlayPlaylist();
+            }
         }
 
-        private string MusicName(string pathToFile)
+        public static void PlayPlaylist()
+        {
+            if(Config.FileArray.Count == 0)
+            {
+                Console.WriteLine("Unable to play playlist");
+                Console.WriteLine("Reason: Playlist is empty");
+                return;
+            }
+            if (counter >= Config.FileArray.Count)
+            {
+                Console.WriteLine("This is last song");
+                return;
+            }
+            else if (counter < 0)
+            {
+                counter = 0;
+            }
+            audioFile = new AudioFileReader(Config.FileArray[counter]);
+            Config.PathToFile = Config.FileArray[counter];
+
+            playerThread = new Thread(Play);
+            Console.WriteLine($"Playing... {MusicName(Config.PathToFile)}");
+            playerThread.IsBackground = true; // This will allow to close all threads on application close
+            playerThread.Start();
+            counter++;
+            MP3Menu.ControlPlayer();
+        }
+
+        private static string MusicName(string pathToFile)
         {
             return Path.GetFileName(pathToFile);
         }

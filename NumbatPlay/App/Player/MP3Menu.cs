@@ -30,29 +30,63 @@ namespace NumbatPlay.App.Player
             Console.WriteLine("6. Stop and quit");
         }
 
-        public static void ControlPlayer(WaveOutEvent outDevice)
+        public static void ControlPlayer()
         {
             PrintMenu();
 
-            string action = Console.ReadLine();
 
-            switch(action)
+            while(true)
             {
-                case "5":
-                    {
-                        return;
-                    }
+                string action = Console.ReadLine();
 
-                case "6":
-                    {
-                        outDevice.Stop();
-                        return;
-                    }
-                default:
-                    {
-                        Console.WriteLine("Undefined option");
-                        break;
-                    }
+                switch (action)
+                {
+                    case "1":
+                        {
+                            if (Config.FileArray.Count != 0)
+                            {
+                                MP3Player.PlayPlaylist();
+                                PrintMenu();
+                            }
+                            else
+                            {
+                                Console.WriteLine("Unable to play next song");
+                                Console.WriteLine("Reason: Playlist is empty");
+                            }
+                            break;
+                        }
+
+                    case "2":
+                        {
+                            if (Config.FileArray.Count != 0)
+                            {
+                                MP3Player.counter -= 2;
+                                MP3Player.PlayPlaylist();
+                                PrintMenu();
+                            }
+                            else
+                            {
+                                Console.WriteLine("Unable to play previous song");
+                                Console.WriteLine("Reason: Playlist is empty");
+                            }
+                            break;
+                        }
+                    case "5":
+                        {
+                            return;
+                        }
+
+                    case "6":
+                        {
+                            MP3Player.OutputDevice.Stop();
+                            return;
+                        }
+                    default:
+                        {
+                            Console.WriteLine("Wrong option");
+                            break;
+                        }
+                }
             }
         }
     }

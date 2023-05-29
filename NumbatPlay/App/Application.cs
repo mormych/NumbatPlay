@@ -18,8 +18,6 @@ namespace NumbatPlay.App
 
         private DateTime LaunchDate;
 
-        private MP3Player player = new MP3Player();
-
         public Application(DateTime launchDate)
         {
             LaunchDate = launchDate;
@@ -38,7 +36,7 @@ namespace NumbatPlay.App
                 {
                     case 1:
                         {
-                            player.Init();
+                            MP3Player.Init();
                             break;
                         }
                     case 2:
@@ -52,9 +50,14 @@ namespace NumbatPlay.App
                             break;
                         }
 
-                    case 9 when player.OutputDevice.PlaybackState == PlaybackState.Playing:
+                    case 4:
                         {
-                            MP3Menu.ControlPlayer(player.OutputDevice);
+                            MP3Player.PlayPlaylist();
+                            break;
+                        }
+                    case 9 when MP3Player.OutputDevice.PlaybackState == PlaybackState.Playing:
+                        {
+                            MP3Menu.ControlPlayer();
                             break;
                         }
 
@@ -83,7 +86,7 @@ namespace NumbatPlay.App
             Console.WriteLine("2. Read MP3 file");
             Console.WriteLine("3. Read MP3 directory");
             Console.WriteLine("4. Play current Playlist");
-            if(player.OutputDevice.PlaybackState == PlaybackState.Playing)
+            if(MP3Player.OutputDevice != null && MP3Player.OutputDevice.PlaybackState == PlaybackState.Playing)
             {
                 Console.WriteLine("9. Return to control panel");
             }

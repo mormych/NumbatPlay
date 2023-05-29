@@ -50,16 +50,18 @@ namespace NumbatPlay.App
 
         private static void ReadFilesFromDir(string pathToDir)
         {
-            Config.FileArray = Directory.GetFiles(pathToDir, "*.mp3");
+            string[] filesFromDir = Directory.GetFiles(pathToDir, "*.mp3");
 
-            Console.WriteLine("Files found: " + Config.FileArray.Length);
-            foreach(var file in Config.FileArray)
+            Console.WriteLine("Files found: " + filesFromDir.Length);
+            int counter = 1;
+            foreach(var file in filesFromDir)
             {
-                Console.WriteLine("File: " + Path.GetFileName(file));
+                Console.WriteLine( counter++ +" File: " + Path.GetFileName(file));
+                Config.FileArray.Add(file);
             }
         }
 
-        private static Boolean CheckCorrect(string path)
+        private static bool CheckCorrect(string path)
         {
             if(!File.Exists(path))
             {

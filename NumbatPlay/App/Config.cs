@@ -9,7 +9,7 @@ namespace NumbatPlay.App
     internal class Config
     {
         private static string? pathToFile = null;
-        private static string[]? fileArray = null;
+        private static List<string> fileArray = new();
 
         public static string PathToFile
         {
@@ -23,7 +23,7 @@ namespace NumbatPlay.App
             }
         }
 
-        public static string[] FileArray
+        public static List<string> FileArray
         {
             get
             {
