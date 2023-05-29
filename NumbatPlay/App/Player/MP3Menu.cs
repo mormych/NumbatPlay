@@ -32,9 +32,6 @@ namespace NumbatPlay.App.Player
 
         public static void ControlPlayer()
         {
-            PrintMenu();
-
-
             while(true)
             {
                 string action = Console.ReadLine();
@@ -43,16 +40,7 @@ namespace NumbatPlay.App.Player
                 {
                     case "1":
                         {
-                            if (Config.FileArray.Count != 0)
-                            {
-                                MP3Player.PlayPlaylist();
-                                PrintMenu();
-                            }
-                            else
-                            {
-                                Console.WriteLine("Unable to play next song");
-                                Console.WriteLine("Reason: Playlist is empty");
-                            }
+                            MP3Player.OutputDevice.Stop();
                             break;
                         }
 
@@ -60,7 +48,6 @@ namespace NumbatPlay.App.Player
                         {
                             if (Config.FileArray.Count != 0)
                             {
-                                MP3Player.counter -= 2;
                                 MP3Player.PlayPlaylist();
                                 PrintMenu();
                             }
@@ -78,7 +65,6 @@ namespace NumbatPlay.App.Player
 
                     case "6":
                         {
-                            MP3Player.OutputDevice.Stop();
                             return;
                         }
                     default:

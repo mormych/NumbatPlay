@@ -1,6 +1,7 @@
 ﻿using NAudio.Wave;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,8 +19,8 @@ namespace NumbatPlay.App.Player
 
         static AudioFileReader audioFile;
         static WaveOutEvent outputDevice = new WaveOutEvent();
-        static public int counter = -1;
-        static Thread playerThread;
+        static public Thread playerThread;
+        static public Task task;
 
         public static WaveOutEvent OutputDevice 
         {
@@ -70,37 +71,34 @@ namespace NumbatPlay.App.Player
             {
                 Thread.Sleep(1000);
             }
-            if(outputDevice.PlaybackState == PlaybackState.Stopped && Config.FileArray.Count != 0) 
+        }
+
+        private static void StartPlaying()
+        {
+            int songMarker = 0; // starting from 1 song 
+
+            while(songMarker < Config.FileArray.Count)
             {
-                PlayPlaylist();
+                audioFile = new AudioFileReader(Config.FileArray[songMarker]);
+                Config.PathToFile = Config.FileArray[songMarker];
+                MP3Menu.PrintMenu();
+                task = Task.Run(Play);
+                task.Wait();
+                songMarker++;
             }
+            Console.WriteLine("Last song");
         }
 
         public static void PlayPlaylist()
         {
             if(Config.FileArray.Count == 0)
             {
-                Console.WriteLine("Unable to play playlist");
-                Console.WriteLine("Reason: Playlist is empty");
+                Console.WriteLine("Your playlist is empty");
                 return;
             }
-            if (counter >= Config.FileArray.Count)
-            {
-                Console.WriteLine("This is last song");
-                return;
-            }
-            else if (counter < 0)
-            {
-                counter = 0;
-            }
-            audioFile = new AudioFileReader(Config.FileArray[counter]);
-            Config.PathToFile = Config.FileArray[counter];
-
-            playerThread = new Thread(Play);
-            Console.WriteLine($"Playing... {MusicName(Config.PathToFile)}");
-            playerThread.IsBackground = true; // This will allow to close all threads on application close
+            playerThread = new Thread(StartPlaying);
+            playerThread.IsBackground = true;
             playerThread.Start();
-            counter++;
             MP3Menu.ControlPlayer();
         }
 

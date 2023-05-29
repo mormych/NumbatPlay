@@ -57,6 +57,7 @@ namespace NumbatPlay.App
                         }
                     case 9 when MP3Player.OutputDevice.PlaybackState == PlaybackState.Playing:
                         {
+                            MP3Menu.PrintMenu();
                             MP3Menu.ControlPlayer();
                             break;
                         }
