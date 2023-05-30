@@ -21,6 +21,7 @@ namespace NumbatPlay.App.Player
         static WaveOutEvent outputDevice = new WaveOutEvent();
         static public Thread playerThread;
         static public Task task;
+        static public int songMarker = 0;
 
         public static WaveOutEvent OutputDevice 
         {
@@ -54,7 +55,8 @@ namespace NumbatPlay.App.Player
             Console.WriteLine($"Playing... {MusicName(Config.PathToFile)}");
             playerThread.IsBackground = true; // This will allow to close all threads on application close
             playerThread.Start();
-            MP3Menu.ControlPlayer();
+            MP3Menu.PrintMenu();
+            MP3Menu.ControlPlayer(true);
         }
 
         private static void Play()
@@ -67,7 +69,7 @@ namespace NumbatPlay.App.Player
             outputDevice.Init(audioFile);
             outputDevice.Play();
 
-            while (outputDevice.PlaybackState == PlaybackState.Playing)
+            while (outputDevice.PlaybackState == PlaybackState.Playing || outputDevice.PlaybackState == PlaybackState.Paused)
             {
                 Thread.Sleep(1000);
             }
@@ -75,7 +77,7 @@ namespace NumbatPlay.App.Player
 
         private static void StartPlaying()
         {
-            int songMarker = 0; // starting from 1 song 
+            songMarker = 0; // starting from 1 song 
 
             while(songMarker < Config.FileArray.Count)
             {

@@ -14,12 +14,18 @@ namespace NumbatPlay.App.Player
 
         }
 
-        public static void PrintMenu()
+        public static void PrintMenu(bool paused = false)
         {
             Console.Clear(); //First we clear screen to print a new menu
 
-            Console.WriteLine("Current playing: " + Path.GetFileName(Config.PathToFile));
-
+            if(paused)
+            {
+                Console.WriteLine("Paused: " + Path.GetFileName(Config.PathToFile));
+            }
+            else
+            {
+                Console.WriteLine("Current playing: " + Path.GetFileName(Config.PathToFile));
+            }
             Console.WriteLine();
 
             Console.WriteLine("1. Next song");
@@ -30,7 +36,7 @@ namespace NumbatPlay.App.Player
             Console.WriteLine("6. Stop and quit");
         }
 
-        public static void ControlPlayer()
+        public static void ControlPlayer(bool singleFile = false)
         {
             while(true)
             {
@@ -38,24 +44,34 @@ namespace NumbatPlay.App.Player
 
                 switch (action)
                 {
-                    case "1":
+                    case "1" when !singleFile:
                         {
                             MP3Player.OutputDevice.Stop();
                             break;
                         }
 
-                    case "2":
+                    case "2" when !singleFile:
                         {
-                            if (Config.FileArray.Count != 0)
+                            if(MP3Player.songMarker == 0)
                             {
-                                MP3Player.PlayPlaylist();
                                 PrintMenu();
+                                break;
                             }
-                            else
-                            {
-                                Console.WriteLine("Unable to play previous song");
-                                Console.WriteLine("Reason: Playlist is empty");
-                            }
+                            MP3Player.songMarker -= 2;
+                            MP3Player.OutputDevice.Stop();
+                            break;
+                        }
+                    case "3":
+                        {
+                            MP3Player.OutputDevice.Pause();
+                            PrintMenu(true);
+                            break;
+                        }
+
+                    case "4":
+                        {
+                            MP3Player.OutputDevice.Play();
+                            PrintMenu();
                             break;
                         }
                     case "5":
@@ -65,11 +81,21 @@ namespace NumbatPlay.App.Player
 
                     case "6":
                         {
+                            MP3Player.songMarker = Config.FileArray.Count;
+                            MP3Player.OutputDevice.Stop();
+                            MP3Player.playerThread.Join(); //Waiting for complete task player thread
                             return;
                         }
                     default:
                         {
-                            Console.WriteLine("Wrong option");
+                            if(singleFile)
+                            {
+                                Console.WriteLine("Option not allowed in single file mode player");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Undefined option");
+                            }
                             break;
                         }
                 }

@@ -21,6 +21,7 @@ namespace NumbatPlay.App
         public Application(DateTime launchDate)
         {
             LaunchDate = launchDate;
+            Console.WriteLine("Startup date: " + LaunchDate.ToLongDateString());
         }
 
 
@@ -55,9 +56,16 @@ namespace NumbatPlay.App
                             MP3Player.PlayPlaylist();
                             break;
                         }
-                    case 9 when MP3Player.OutputDevice.PlaybackState == PlaybackState.Playing:
+                    case 9 when MP3Player.OutputDevice.PlaybackState == PlaybackState.Playing || MP3Player.OutputDevice.PlaybackState == PlaybackState.Paused:
                         {
-                            MP3Menu.PrintMenu();
+                            if(MP3Player.OutputDevice.PlaybackState == PlaybackState.Paused)
+                            {
+                                MP3Menu.PrintMenu(true);
+                            }
+                            else
+                            {
+                                MP3Menu.PrintMenu();
+                            }
                             MP3Menu.ControlPlayer();
                             break;
                         }
@@ -87,7 +95,7 @@ namespace NumbatPlay.App
             Console.WriteLine("2. Read MP3 file");
             Console.WriteLine("3. Read MP3 directory");
             Console.WriteLine("4. Play current Playlist");
-            if(MP3Player.OutputDevice != null && MP3Player.OutputDevice.PlaybackState == PlaybackState.Playing)
+            if(MP3Player.OutputDevice != null && MP3Player.OutputDevice.PlaybackState == PlaybackState.Playing || MP3Player.OutputDevice.PlaybackState == PlaybackState.Paused)
             {
                 Console.WriteLine("9. Return to control panel");
             }

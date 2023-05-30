@@ -6,15 +6,15 @@ namespace NumbatPlay
     {
         static void Main(string[] args)
         {
-            Application application = new Application(DateTime.Now);
             Logo();
+            Application application = new Application(DateTime.Now);
             application.Start();
         }
 
         static void Logo()
         {
             Console.WriteLine("********NumbatSoftware********");
-            Console.WriteLine("**Numbat player ver. 0.5BETA**");
+            Console.WriteLine("****Numbat player ver. 1.0****");
         }
     }
 }
